@@ -1,0 +1,19 @@
+{
+    "name": "@robinnorth/google-migration-utils",
+    "version": "0.1.0",
+    "description": "CLI utilities to assist with migrating Google Account data where no Google-provided solution exists",
+    "main": "./src/cli.js",
+    "author": "Robin North <robin@robinnorth.co.uk>",
+    "license": "MIT",
+    "dependencies": {
+        "csvtojson": "^2.0.10",
+        "delay": "^5.0.0",
+        "inquirer": "^8.0.0",
+        "puppeteer": "^9.0.0",
+        "yargs": "^16.2.0"
+    },
+    "bin": {
+        "gmigrate": "./src/cli.js"
+    },
+    "type": "module"
+}
