@@ -42,24 +42,10 @@ const importPlaces = async (argv) => {
         message: "Which list should these places be imported to?",
         type: "list",
         name: "list",
-        choices: [
-          {
-            name: LIST_NAMES[LIST_INDEXES.Favorites],
-            value: LIST_INDEXES.Favorites,
-          },
-          {
-            name: LIST_NAMES[LIST_INDEXES.WantToGo],
-            value: LIST_INDEXES.WantToGo,
-          },
-          {
-            name: LIST_NAMES[LIST_INDEXES.Starred],
-            value: LIST_INDEXES.Starred,
-          },
-          {
-            name: LIST_NAMES[LIST_INDEXES.Custom],
-            value: LIST_INDEXES.Custom,
-          },
-        ],
+        choices: Object.values(LIST_INDEXES).map((item) => ({
+          name: LIST_NAMES[item],
+          value: item,
+        })),
         default: 2,
       },
       {
