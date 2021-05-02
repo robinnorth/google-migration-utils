@@ -2,7 +2,11 @@ import csv from "csvtojson";
 import delay from "delay";
 import { readFileSync } from "fs";
 import inquirer from "inquirer";
-import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-extra";
+import StealthPlugin from "puppeteer-extra-plugin-stealth";
+
+// (Attempt to) Prevent Google Account login from being blocked for using an automated browser
+puppeteer.use(StealthPlugin());
 
 const LIST_INDEXES = Object.freeze({
   Favorites: 0,
@@ -90,6 +94,10 @@ const importPlaces = async (argv) => {
   await page.exposeFunction("log", (...args) => console.log(...args));
   await page.exposeFunction("delay", delay);
 
+  const exit = () => {
+    browser.close();
+  };
+
   // Google Account login
   await page.goto(LOGIN_URL);
 
@@ -102,12 +110,27 @@ const importPlaces = async (argv) => {
   await page.waitForNavigation();
 
   // Enter password
-  await page.evaluate((password) => {
-    document.querySelector("[name='password'").value = password;
-    document.querySelector("#passwordNext button").click();
+  let loginPermitted = await page.evaluate((password) => {
+    let passwordInput = document.querySelector("[name='password'");
+
+    if (passwordInput) {
+      passwordInput.value = password;
+      document.querySelector("#passwordNext button").click();
+    }
+
+    return passwordInput !== null;
   }, password);
 
-  await page.waitForNavigation();
+  // Detect if login was permitted
+  if (loginPermitted) {
+    await page.waitForNavigation();
+  } else {
+    console.error(
+      "Google Account login was blocked. If you have 2FA enabled, temporarily disable it."
+    );
+    exit();
+    return;
+  }
 
   console.log(`${places.length} places found to import in ${file}`);
   console.log(
@@ -163,7 +186,7 @@ const importPlaces = async (argv) => {
     );
   }
 
-  browser.close();
+  exit();
 
   console.log("Finished importing places!");
 };
