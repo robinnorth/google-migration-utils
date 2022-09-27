@@ -8,10 +8,11 @@ import StealthPlugin from "puppeteer-extra-plugin-stealth";
 // (Attempt to) Prevent Google Account login from being blocked for using an automated browser
 puppeteer.use(StealthPlugin());
 
+
 const LIST_INDEXES = Object.freeze({
   Favorites: 0,
   WantToGo: 1,
-  Starred: 2,
+  Starred: 3,
   Custom: 256,
 });
 const LIST_NAMES = Object.freeze({
@@ -100,6 +101,7 @@ const importPlaces = async (argv) => {
 
   // Google Account login
   await page.goto(LOGIN_URL);
+  await page.setBypassCSP(true);
 
   // Enter username
   await page.evaluate((username) => {
@@ -111,7 +113,7 @@ const importPlaces = async (argv) => {
 
   // Enter password
   let loginPermitted = await page.evaluate((password) => {
-    let passwordInput = document.querySelector("[name='password'");
+    let passwordInput = document.querySelector("[type='password'");
 
     if (passwordInput) {
       passwordInput.value = password;
@@ -126,10 +128,14 @@ const importPlaces = async (argv) => {
     await page.waitForNavigation();
   } else {
     console.error(
-      "Google Account login was blocked. If you have 2FA enabled, temporarily disable it."
+      "Automatic login not possible. Requires user interaction."
     );
-    exit();
-    return;
+
+    let { confirmlogin } = await inquirer.prompt([{type: 'confirm', message: "You can manually log in now or abort now. Confirm when logged in.", name:"confirmlogin"}])
+    if (confirmlogin == false) {
+      exit();
+      return;
+    }
   }
 
   console.log(`${places.length} places found to import in ${file}`);
@@ -140,13 +146,14 @@ const importPlaces = async (argv) => {
   for (let place of places) {
     let { name, url } = place;
 
-    await page.goto(url, { waitUntil: "networkidle2" });
+    await page.goto(url, { waitUntil: "load" });
 
     // Load Google Maps page for place
     await page.evaluate(
       async (name, listIndex, listName) => {
+        await window.delay(150);
         let saveButton = document.querySelector(
-          "button[jsaction='pane.placeActions.save']"
+          "button[jsaction='pane.placeActions.save;keydown:pane.placeActions.save']"
         );
         let message = "";
 
@@ -155,7 +162,7 @@ const importPlaces = async (argv) => {
           saveButton.click();
 
           // Select list to save to, after waiting for the selector menu to display
-          await window.delay(100);
+          await window.delay(150);
 
           let listCheckbox = document.querySelector(
             `[data-index="${listIndex}"][aria-checked="false"]`
