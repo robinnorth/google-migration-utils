@@ -11,7 +11,7 @@ puppeteer.use(StealthPlugin());
 const LIST_INDEXES = Object.freeze({
   Favorites: 0,
   WantToGo: 1,
-  Starred: 2,
+  Starred: 3,
   Custom: 256,
 });
 const LIST_NAMES = Object.freeze({
@@ -146,7 +146,7 @@ const importPlaces = async (argv) => {
     await page.evaluate(
       async (name, listIndex, listName) => {
         let saveButton = document.querySelector(
-          "button[jsaction='pane.placeActions.save']"
+          "button[jsaction='pane.placeActions.save;keydown:pane.placeActions.save']"
         );
         let message = "";
 
