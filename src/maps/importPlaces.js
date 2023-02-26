@@ -8,7 +8,6 @@ import StealthPlugin from "puppeteer-extra-plugin-stealth";
 // (Attempt to) Prevent Google Account login from being blocked for using an automated browser
 puppeteer.use(StealthPlugin());
 
-
 const LIST_INDEXES = Object.freeze({
   Favorites: 0,
   WantToGo: 1,
@@ -65,6 +64,7 @@ const importPlaces = async (argv) => {
       password: argv.password,
       file: argv.file,
       list: argv.list,
+      customList: argv.customList,
     }
   );
 
@@ -127,11 +127,16 @@ const importPlaces = async (argv) => {
   if (loginPermitted) {
     await page.waitForNavigation();
   } else {
-    console.error(
-      "Automatic login not possible. Requires user interaction."
-    );
+    console.error("Automatic login not possible. Requires user interaction.");
 
-    let { confirmlogin } = await inquirer.prompt([{type: 'confirm', message: "You can manually log in now or abort now. Confirm when logged in.", name:"confirmlogin"}])
+    let { confirmlogin } = await inquirer.prompt([
+      {
+        type: "confirm",
+        message:
+          "You can manually log in now or abort now. Confirm when logged in.",
+        name: "confirmlogin",
+      },
+    ]);
     if (confirmlogin == false) {
       exit();
       return;
