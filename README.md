@@ -35,8 +35,6 @@ ere exported by Google Takeout
 Options:
       --version     Show version number                                [boolean]
       --help        Show help                                          [boolean]
-  -u, --username    Google Account username                             [string]
-  -p, --password    Google Account password                             [string]
   -f, --file        Path to a file containing Google Maps places data in GeoJSON
                      or a Google Maps places list in CSV format         [string]
   -l, --list        Name of the list you want to import to
