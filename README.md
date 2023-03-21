@@ -5,7 +5,7 @@
 ## Installation
 
 ```shell
-$ yarn install
+$ yarn
 ```
 
 or
