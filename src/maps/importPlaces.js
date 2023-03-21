@@ -79,6 +79,10 @@ const importPlaces = async (argv) => {
 
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
+
+  // Ensure long imports don't time out
+  page.setDefaultTimeout(0);
+
   await page.exposeFunction("log", (...args) => console.log(...args));
   await page.exposeFunction("delay", delay);
 
