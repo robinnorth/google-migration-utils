@@ -8,7 +8,6 @@ import StealthPlugin from "puppeteer-extra-plugin-stealth";
 // (Attempt to) Prevent Google Account login from being blocked for using an automated browser
 puppeteer.use(StealthPlugin());
 
-
 const LIST_INDEXES = Object.freeze({
   Favorites: 0,
   WantToGo: 1,
@@ -26,17 +25,6 @@ const LOGIN_URL = "https://accounts.google.com/";
 const importPlaces = async (argv) => {
   const options = await inquirer.prompt(
     [
-      {
-        message: "Enter your Google Account username",
-        type: "input",
-        name: "username",
-      },
-      {
-        message: "Enter your Google Account password",
-        type: "password",
-        name: "password",
-        mask: "*",
-      },
       {
         message:
           "Provide the path to a file containing Google Maps places data in GeoJSON or a Google Maps places list in CSV format",
@@ -61,8 +49,6 @@ const importPlaces = async (argv) => {
       },
     ],
     {
-      username: argv.username,
-      password: argv.password,
       file: argv.file,
       list: argv.list,
     }
@@ -103,39 +89,17 @@ const importPlaces = async (argv) => {
   await page.goto(LOGIN_URL);
   await page.setBypassCSP(true);
 
-  // Enter username
-  await page.evaluate((username) => {
-    document.getElementById("identifierId").value = username;
-    document.getElementById("identifierNext").click();
-  }, username);
-
-  await page.waitForNavigation();
-
-  // Enter password
-  let loginPermitted = await page.evaluate((password) => {
-    let passwordInput = document.querySelector("[type='password'");
-
-    if (passwordInput) {
-      passwordInput.value = password;
-      document.querySelector("#passwordNext button").click();
-    }
-
-    return passwordInput !== null;
-  }, password);
-
-  // Detect if login was permitted
-  if (loginPermitted) {
-    await page.waitForNavigation();
-  } else {
-    console.error(
-      "Automatic login not possible. Requires user interaction."
-    );
-
-    let { confirmlogin } = await inquirer.prompt([{type: 'confirm', message: "You can manually log in now or abort now. Confirm when logged in.", name:"confirmlogin"}])
-    if (confirmlogin == false) {
-      exit();
-      return;
-    }
+  let { confirmlogin } = await inquirer.prompt([
+    {
+      type: "confirm",
+      message:
+        "You can manually log in now or abort now. Confirm when logged in.",
+      name: "confirmlogin",
+    },
+  ]);
+  if (confirmlogin == false) {
+    exit();
+    return;
   }
 
   console.log(`${places.length} places found to import in ${file}`);
