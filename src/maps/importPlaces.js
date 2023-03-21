@@ -54,7 +54,7 @@ const importPlaces = async (argv) => {
     }
   );
 
-  let { username, password, file, list, customList } = options;
+  let { file, list, customList } = options;
 
   // Prepare places data
   const places = [];
@@ -92,8 +92,7 @@ const importPlaces = async (argv) => {
   let { confirmlogin } = await inquirer.prompt([
     {
       type: "confirm",
-      message:
-        "You can manually log in now or abort now. Confirm when logged in.",
+      message: "You can log in or abort now. Confirm when logged in.",
       name: "confirmlogin",
     },
   ]);
@@ -103,9 +102,7 @@ const importPlaces = async (argv) => {
   }
 
   console.log(`${places.length} places found to import in ${file}`);
-  console.log(
-    `Importing Google Maps places to '${LIST_NAMES[list]}' list for ${username}`
-  );
+  console.log(`Importing Google Maps places to '${LIST_NAMES[list]}' list`);
 
   for (let place of places) {
     let { name, url } = place;
@@ -165,16 +162,6 @@ const importPlaces = async (argv) => {
 export default {
   command: "import-places",
   builder: {
-    username: {
-      alias: "u",
-      describe: "Google Account username",
-      type: "string",
-    },
-    password: {
-      alias: "p",
-      describe: "Google Account password",
-      type: "string",
-    },
     file: {
       alias: "f",
       describe:
