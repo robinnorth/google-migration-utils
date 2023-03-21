@@ -51,6 +51,7 @@ const importPlaces = async (argv) => {
     {
       file: argv.file,
       list: argv.list,
+      customList: argv.customList,
     }
   );
 
