@@ -119,7 +119,7 @@ const importPlaces = async (argv) => {
       async (name, listIndex, listName) => {
         await window.delay(150);
         let saveButton = document.querySelector(
-          "button[jsaction='pane.placeActions.save;keydown:pane.placeActions.save']"
+          "button[jsaction*='pane.placeActions.save']"
         );
         let message = "";
 
