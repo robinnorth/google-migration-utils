@@ -14,5 +14,8 @@
     "puppeteer-extra-plugin-stealth": "^2.11.1",
     "yargs": "^16.2.0"
   },
-  "type": "module"
+  "type": "module",
+  "scripts": {
+    "cli": "node ./src/cli.js"
+  }
 }

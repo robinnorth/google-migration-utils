@@ -17,7 +17,7 @@ $ npm i
 ## Usage
 
 ```shell
-$ node src/cli.js <service> <action> [--help]
+$ yarn cli <service> <action> [--help]
 ```
 
 ### Google Maps
@@ -27,7 +27,7 @@ $ node src/cli.js <service> <action> [--help]
 Based off a [gist](https://gist.github.com/benjibee/37e0031a8aa7a25e9814a01bdb03217c) by [@benjibee]
 
 ```shell
-$ node src/cli.js maps import-places --help
+$ yarn cli maps import-places --help
 
 Imports places to Google Maps from saved places GeoJSON or CSV data files that w
 ere exported by Google Takeout
