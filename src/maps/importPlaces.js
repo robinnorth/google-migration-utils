@@ -20,7 +20,7 @@ const LIST_NAMES = Object.freeze({
   [LIST_INDEXES.Starred]: "Starred Places",
   [LIST_INDEXES.Custom]: "Custom",
 });
-const LOGIN_URL = "https://accounts.google.com/";
+const LOGIN_URL = "https://accounts.google.com/?hl=en";
 
 const importPlaces = async (argv) => {
   const options = await inquirer.prompt(
@@ -90,6 +90,11 @@ const importPlaces = async (argv) => {
     browser.close();
   };
 
+  // Ensure we're served content in English
+  await page.setExtraHTTPHeaders({
+    "Accept-Language": "en",
+  });
+
   // Google Account login
   await page.goto(LOGIN_URL);
   await page.setBypassCSP(true);
@@ -118,9 +123,7 @@ const importPlaces = async (argv) => {
     await page.evaluate(
       async (name, listIndex, listName) => {
         await window.delay(150);
-        let saveButton = document.querySelector(
-          "button[aria-label='Save']"
-        );
+        let saveButton = document.querySelector("button[aria-label='Save']");
         let message = "";
 
         if (saveButton) {
